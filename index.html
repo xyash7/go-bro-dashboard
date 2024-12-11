@@ -4,10 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Go Bro Analytics Dashboard</title>
+    <!-- Core dependencies -->
     <script src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/recharts/umd/Recharts.js"></script>
+    <script src="https://unpkg.com/lucide-react@0.263.1/dist/umd/lucide-react.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body>
@@ -23,38 +25,174 @@
     </div>
 
     <script type="text/javascript">
-        // Basic dashboard data will be added here
-        const data = {
-            currentWeek: {
-                installs: "182,363",
-                profiles: "87,480",
-                targetAge: "53,672",
-                completion: "2,144"
+        // Dashboard data
+        const dashboardData = {
+            kpis: [
+                {
+                    title: "Total Installs",
+                    current: "182,363",
+                    target: "834,000",
+                    progress: "21.9",
+                    trend: "+41% WoW"
+                },
+                {
+                    title: "Profile Creation",
+                    current: "87,480",
+                    target: "500,400",
+                    progress: "17.5",
+                    trend: "+26% WoW"
+                },
+                {
+                    title: "Target Age Group (15-19)",
+                    current: "53,672",
+                    target: "300,240",
+                    progress: "17.9",
+                    trend: "+29% WoW"
+                },
+                {
+                    title: "Full Game Completion",
+                    current: "2,144",
+                    target: "60,048",
+                    progress: "3.6",
+                    trend: "+50% WoW"
+                }
+            ],
+            levelMetrics: [
+                {
+                    name: "Setting Pakki",
+                    started: 19014,
+                    completed: 6058,
+                    completion: "31.9"
+                },
+                {
+                    name: "Kiss ya Miss",
+                    started: 20345,
+                    completed: 7788,
+                    completion: "38.3"
+                },
+                {
+                    name: "Sex or Ex",
+                    started: 22084,
+                    completed: 9006,
+                    completion: "40.8"
+                }
+            ],
+            dropoffs: {
+                neverOpened: "44.26",
+                homeScreen: "7.77",
+                beforeMission: "15.00",
+                reachedMission: "32.97"
+            },
+            demographics: {
+                boys: "53,672",
+                girls: "9,001",
+                others: "11,280"
             }
         };
 
-        // Root component
-        const App = () => {
-            return React.createElement('div', { className: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4' },
-                Object.entries(data.currentWeek).map(([key, value]) => 
-                    React.createElement('div', { 
-                        key,
-                        className: 'bg-white p-6 rounded-lg shadow'
-                    }, [
-                        React.createElement('h2', { 
-                            className: 'text-lg font-semibold text-gray-700'
-                        }, key),
-                        React.createElement('p', { 
-                            className: 'text-3xl font-bold text-gray-900'
-                        }, value)
-                    ])
+        // Card Component
+        const Card = ({ children, className }) => {
+            return React.createElement('div', {
+                className: `bg-white rounded-lg shadow p-6 ${className || ''}`
+            }, children);
+        };
+
+        // KPI Card Component
+        const KPICard = ({ title, current, target, progress, trend }) => {
+            return React.createElement(Card, { className: 'flex flex-col' }, [
+                React.createElement('div', { className: 'flex justify-between items-center mb-4' }, [
+                    React.createElement('h3', { className: 'text-sm font-medium text-gray-900' }, title)
+                ]),
+                React.createElement('div', { className: 'mt-1' }, [
+                    React.createElement('div', { className: 'text-2xl font-semibold text-gray-900' }, current),
+                    React.createElement('div', { className: 'text-sm text-gray-500' }, 
+                        `Target: ${target} (${progress}%)`
+                    ),
+                    React.createElement('div', { className: 'mt-2 text-sm text-green-600' }, trend)
+                ])
+            ]);
+        };
+
+        // Progress Bar Component
+        const ProgressBar = ({ value, label }) => {
+            return React.createElement('div', { className: 'space-y-2' }, [
+                React.createElement('div', { className: 'flex justify-between text-sm' }, [
+                    React.createElement('span', null, label),
+                    React.createElement('span', null, `${value}%`)
+                ]),
+                React.createElement('div', { className: 'h-2 bg-gray-200 rounded-full' }, 
+                    React.createElement('div', {
+                        className: 'h-2 bg-blue-600 rounded-full',
+                        style: { width: `${value}%` }
+                    })
                 )
-            );
+            ]);
+        };
+
+        // Main Dashboard Component
+        const Dashboard = () => {
+            return React.createElement('div', { className: 'space-y-6' }, [
+                // KPIs Section
+                React.createElement('div', { className: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4' },
+                    dashboardData.kpis.map((kpi, index) => 
+                        React.createElement(KPICard, { key: index, ...kpi })
+                    )
+                ),
+
+                // Level Completion Section
+                React.createElement(Card, null, [
+                    React.createElement('h2', { className: 'text-lg font-semibold mb-4' }, 'Level Completion'),
+                    React.createElement('div', { className: 'space-y-4' },
+                        dashboardData.levelMetrics.map((level, index) =>
+                            React.createElement(ProgressBar, {
+                                key: index,
+                                label: level.name,
+                                value: level.completion
+                            })
+                        )
+                    )
+                ]),
+
+                // Metrics Grid
+                React.createElement('div', { className: 'grid grid-cols-1 md:grid-cols-2 gap-4' }, [
+                    // Dropoffs Card
+                    React.createElement(Card, null, [
+                        React.createElement('h2', { className: 'text-lg font-semibold mb-4' }, 'User Journey Dropoffs'),
+                        React.createElement('div', { className: 'space-y-2' },
+                            Object.entries(dashboardData.dropoffs).map(([key, value], index) =>
+                                React.createElement('div', { 
+                                    key: index,
+                                    className: 'flex justify-between text-sm'
+                                }, [
+                                    React.createElement('span', null, key),
+                                    React.createElement('span', null, `${value}%`)
+                                ])
+                            )
+                        )
+                    ]),
+
+                    // Demographics Card
+                    React.createElement(Card, null, [
+                        React.createElement('h2', { className: 'text-lg font-semibold mb-4' }, 'Demographics (15-19)'),
+                        React.createElement('div', { className: 'space-y-2' },
+                            Object.entries(dashboardData.demographics).map(([key, value], index) =>
+                                React.createElement('div', { 
+                                    key: index,
+                                    className: 'flex justify-between text-sm'
+                                }, [
+                                    React.createElement('span', null, key),
+                                    React.createElement('span', null, value)
+                                ])
+                            )
+                        )
+                    ])
+                ])
+            ]);
         };
 
         // Render the app
         ReactDOM.render(
-            React.createElement(App),
+            React.createElement(Dashboard),
             document.getElementById('root')
         );
     </script>
