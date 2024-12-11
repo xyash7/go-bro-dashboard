@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Go Bro Analytics Dashboard</title>
+    <script src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/recharts/umd/Recharts.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="min-h-screen bg-gray-100">
+        <header class="bg-white shadow">
+            <div class="max-w-7xl mx-auto px-4 py-6">
+                <h1 class="text-3xl font-bold text-gray-900">Go Bro Analytics Dashboard</h1>
+            </div>
+        </header>
+        <main class="max-w-7xl mx-auto px-4 py-6">
+            <div id="root"></div>
+        </main>
+    </div>
+
+    <script type="text/javascript">
+        // Basic dashboard data will be added here
+        const data = {
+            currentWeek: {
+                installs: "182,363",
+                profiles: "87,480",
+                targetAge: "53,672",
+                completion: "2,144"
+            }
+        };
+
+        // Root component
+        const App = () => {
+            return React.createElement('div', { className: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4' },
+                Object.entries(data.currentWeek).map(([key, value]) => 
+                    React.createElement('div', { 
+                        key,
+                        className: 'bg-white p-6 rounded-lg shadow'
+                    }, [
+                        React.createElement('h2', { 
+                            className: 'text-lg font-semibold text-gray-700'
+                        }, key),
+                        React.createElement('p', { 
+                            className: 'text-3xl font-bold text-gray-900'
+                        }, value)
+                    ])
+                )
+            );
+        };
+
+        // Render the app
+        ReactDOM.render(
+            React.createElement(App),
+            document.getElementById('root')
+        );
+    </script>
+</body>
+</html>
